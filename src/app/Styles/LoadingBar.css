@@ -1,0 +1,16 @@
+.loading-bar-container {
+    width: 100%;
+    height: 30px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  
+  .loading-bar {
+    height: 100%;
+    background-color: #4caf50;
+    width: 0%; /* Dynamic width controlled by React state */
+    transition: width 0.5s ease-in-out; /* Smooth transition */
+  }
+  
