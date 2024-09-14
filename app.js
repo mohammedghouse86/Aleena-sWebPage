@@ -1,18 +1,31 @@
+const bcrypt = require('bcrypt')
 const { where } = require('sequelize');
 const {sequelize, WebSiteUsers, Post}  = require('./models')
 const express = require('express')
+
 
 const app = express();
 app.use(express.json());
 // 1. Inserting new row into the DATABASE
 app.post('/websiteusers', async(req, res)=>{
-    const {name,email,role,age} = req.body;
+    const {name,email,role,age, password, photo} = req.body;
     try {
+        // Check if user already exists
+        const userExists = await WebSiteUsers.findOne({where:{"name":name}}); //checking if user exists
+        if(userExists){  
+        return res.status(400).json({message:"Bad Request, User Already Exists!!!"});}
+
+        // Generate a salt and hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const user1 = await WebSiteUsers.create({
             name,
             email,
             role,
-            age
+            age,
+            password:hashedPassword,
+            photo
         }) 
         return res.status(202).json(user1);
     } catch (error) {

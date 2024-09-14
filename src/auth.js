@@ -6,8 +6,9 @@ import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import {authConfig} from './auth.config';
+const {GetuserLogin} = require('../src/app/actions/index')
 export const {
-  handlers: { GET, POST },
+  handlers: { GET, POST }, //will not work for anything except for ~*~*~npm install next-auth@beta~*~*~
   auth,
   signIn,
   signOut,
@@ -40,17 +41,14 @@ export const {
       async authorize(credentials) {
         if (credentials === null) return null;
         try {
-          //await connectToDB();
-          console.log('Connected to DB');
+          //fetching the getuser API
+          console.log('These are the credentials from auth.js file',credentials);
+          const userdetails = await GetuserLogin(credentials.email);
+          console.log('Connected to userdetails YOYOYOYOYO',userdetails);
 
-          const user = await User.findOne({ email: credentials.email });
-          if (!user) {
-            console.error('User not found');
-            return null;
-          }
           //console.log('User found:', user);
 
-          const isMatch = await bcrypt.compare(credentials.password, user.password);
+          const isMatch = await bcrypt.compare(credentials.password, userdetails.password);
           if (!isMatch) {
             console.error('Invalid credentials');
             return null;
@@ -61,7 +59,7 @@ export const {
             //id: user._id.toString(),
             //email: user.email,
             //username: user.username,
-            user
+            userdetails
           };
         }
         catch (error) {

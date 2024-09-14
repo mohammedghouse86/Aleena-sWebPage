@@ -11,24 +11,29 @@ const LoginForm = () => {
         e.preventDefault();
         try {
             const formdata = new FormData(e.currentTarget);
-            const response = doCredentialLogin(formdata);
-            //console.log('this is response =', response)
-            if (!!response.error) {
+    
+            // Await the login response
+            const response = await doCredentialLogin(formdata);
 
-            }
-            else {
-                router.push('/home');
+    
+            console.log('this is response in login component =', response);
+    
+            // Check for error in response
+            if (response.error) {
+                //router.push('/');
+            } else {
+                router.push('/Home');
             }
         } catch (error) {
             console.error(error);
         }
-    }
+    };
     return (
         <>
             <div className='container' style={{ height: '400px', width: '200px', backgroundColor: 'lightblue', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <form onSubmit={handleSubmit}>
-                    <div style={{ width: '180px', margin:'10px' }}>Email</div>
-                    <input style={{ width: '180px', margin:'10px' }} placeholder='Enter Email' type='email' name='email' />
+                    <div style={{ width: '180px', margin:'10px' }}>Name</div>
+                    <input style={{ width: '180px', margin:'10px' }} placeholder='Enter Email' type='text' name='email' />
                     <div style={{ width: '180px', margin:'10px' }}>Password</div>
                     <input style={{ width: '180px', margin:'10px' }} placeholder='Enter Password' type='password' name='password' />
                     <button style={{ width: '180px', margin:'10px' }} className='bg-black text-white p-1 rounded-md m-1 text-lg w-40' type="submit" name="action" value="credential">Log In</button>
