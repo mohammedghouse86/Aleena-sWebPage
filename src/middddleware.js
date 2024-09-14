@@ -6,7 +6,7 @@ const {auth} = NextAuth(authConfig);
 export async function middleware(request){
     const session = await auth();
     console.log('this is session',session);
-    return NextResponse.redirect(new URL("/home/newHome",request.url));
+    return NextResponse.redirect(new URL("/Game",request.url));
 }
 
 export const config = {

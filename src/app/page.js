@@ -1,23 +1,33 @@
-import React from "react";
-import "./globals.css";
-import IntroPhoto from "./Components/IntroPhoto";
-import Game1 from "./Components/Game1";
-import Confetti from "./Components/Confetti";
-import {PageProvider} from "./utilities/Context";
+'use client'
+import React, { useEffect} from 'react';
+import LogInForm from './components/LogInForm';
+import { useRouter } from 'next/navigation';
+const Home = () => {
+  const router = useRouter();
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
+        //console.log('this is data ===>>>>', data)
 
-const page = () => {
+        if (data) {
+          router.push('/home');
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      }
+    };
+
+    fetchSession();
+  }, [router]);
   return (
-    
-      <div className="homepge">
-        <h1>Hi I am Aleena and welcome to my website</h1>
-        <IntroPhoto />
-        <PageProvider>
-        <Game1 />
-        </PageProvider>
-        
-      </div>
-    
+    <>
+    <div className="flex items-center justify-center min-h-screen">
+      HomePage <LogInForm/>
+    </div>
+    </>
   );
-};
+}
 
-export default page;
+export default Home;

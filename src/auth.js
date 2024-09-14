@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import { connectToDB } from './utils/database';
-import User from './app/models/user';
+//import { connectToDB } from './utils/database';
+//import User from './app/models/user';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import {authConfig} from './auth.config';
@@ -40,7 +40,7 @@ export const {
       async authorize(credentials) {
         if (credentials === null) return null;
         try {
-          await connectToDB();
+          //await connectToDB();
           console.log('Connected to DB');
 
           const user = await User.findOne({ email: credentials.email });
