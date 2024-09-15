@@ -6,12 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "now": "concurrently \"npm run dev\" \"nodemon app.js\""
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "concurrently": "^9.0.1",
+    "cors": "^2.8.5",
     "express": "^4.20.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.1",
     "next": "14.2.7",
     "next-auth": "^5.0.0-beta.20",

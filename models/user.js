@@ -66,9 +66,9 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty:{msg:'Password can not be EMPTY'}
       }
     },
-    photo:{
-      type:DataTypes.STRING,
-      allowNull: true,
+    photo: {
+      type: DataTypes.BLOB('long'), // BLOB to store image
+      allowNull: true
     }
   }, {
     sequelize,

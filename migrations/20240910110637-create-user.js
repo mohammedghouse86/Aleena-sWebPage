@@ -25,8 +25,8 @@ module.exports = {
       password: {
         type:DataTypes.STRING
       },
-      photo:{
-        type:DataTypes.STRING
+      photo: {
+        type: DataTypes.BLOB('long')
       }
     });
   },
