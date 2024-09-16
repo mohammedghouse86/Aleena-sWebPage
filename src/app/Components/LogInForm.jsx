@@ -2,7 +2,7 @@
 import React from 'react';
 import SocialLogIn from './SocialLogIn';
 import { doCredentialLogin } from '../actions/index';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const LoginForm = () => {

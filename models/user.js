@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // Define association here
       this.hasMany(models.Post, { foreignKey: 'userID' });
+      this.hasOne(models.Wallet, { foreignKey: 'userID' });
     }
     toJSON(){
       return {...this.get()} //return {...this.get(), id:undefined} Ghouse did this

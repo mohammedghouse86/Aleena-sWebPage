@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const { where } = require("sequelize");
 const multer = require('multer');
-const { sequelize, WebSiteUsers, Post } = require("./models");
+const { sequelize, WebSiteUsers, Post, Wallet } = require("./models");
 const express = require("express");
 const cors = require('cors');
 
@@ -40,7 +40,7 @@ app.post("/websiteusers", upload.single('photo'), async (req, res) => {
       password: hashedPassword,
       photo: photo.buffer,
     });
-    return res.status(202).json(user1);
+    return res.status(200).json(user1);
   } catch (error) {
     console.error(error);
     return res.status(500).json(error);
@@ -62,6 +62,18 @@ app.get("/Getuser/:name", async (req, res) => {
     const { name: name } = req.params;
     const user1 = await WebSiteUsers.findOne({ where: { name: name } });
     return res.status(202).json(user1);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+// 3A. Fetching a perticular user's photo from the table
+app.get("/Getuserphoto/:name", async (req, res) => {
+  try {
+    const { name: name } = req.params;
+    const user1 = await WebSiteUsers.findOne({ where: { name: name } });
+    const photo = user1.photo.toString('base64');
+    return res.status(202).json(photo);
   } catch (error) {
     console.error(error);
     return res.status(500).json(error);
@@ -171,6 +183,55 @@ app.get("/getUserandPost/:uuid", async (req, res) => {
       include: [Post],
     });
     return res.status(202).json(user1);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+// 12. Adding Row in Wallets
+app.post("/addMoney", async (req, res) => {
+  const { userUuid, money } = req.body;
+  try {
+    const user1 = await WebSiteUsers.findOne({
+      where: { uuid: userUuid },
+    });
+    //checking if wallet is empty or not 
+    const isWalletFull = await Wallet.findOne({where: { userId: user1.id }});
+    //When wallet is not empty delete the old data and add new
+    if(isWalletFull){
+    
+      await Wallet.update(
+        { dollars: money },           // New values
+        { where: { userId: user1.id }} // Where condition
+      );
+      const isWalletFull1 = await Wallet.findOne({where: { userId: user1.id }});
+    return res.status(202).json({isWalletFull1,message:'Wallet Updated!!!'});}
+    else{
+    const wallet = await Wallet.create({ dollars:money, userID: user1.id });
+    return res.status(202).json({wallet,message:'Wallet Created!!!'});
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+// 13. Deleting Row in Wallets
+app.delete("/deleteMoney", async (req, res) => {
+  const { userUuid } = req.body;
+  try {
+    const user1 = await WebSiteUsers.findOne({
+      where: { uuid: userUuid },
+    });
+    //checking if wallet is empty or not 
+    const isWalletFull = await Wallet.findOne({where: { userId: user1.id }});
+    //When wallet is not empty delete the old data and add new
+    if(isWalletFull){
+      await Wallet.destroy({where:{ userId: user1.id }} 
+      );
+    return res.status(202).json({message:'Wallet Deleted!!!'});}
+    else{
+      return res.status(202).json({message:'Wallet Does not Exists!!!'});
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json(error);

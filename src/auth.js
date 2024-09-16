@@ -72,9 +72,15 @@ export const {
     async jwt({ token, user }) {
       if (user) {
         //console.log("User in JWT callback:", user);
-        token.id = user.id;
+        //token.id = user.id;
         //token.username = user.username; // Add username to the token
-        token = user;
+        //token = user;
+        token.id = user.userdetails.id; // Store only the user id
+        token.email = user.userdetails.email; // Optional, store email if needed
+        token.name = user.userdetails.name;
+        token.role = user.userdetails.role;
+        token.age = user.userdetails.age;
+        token.uuid = user.userdetails.uuid;
       }
       return token;
     },
@@ -82,8 +88,17 @@ export const {
       //console.log("Session data:", session);
       //session.user.id = token.id;
       //session.user.username = token.username; // Add username to the session
-      session = token;
+      //session = token;
       //console.log('and',session.one);
+      session.user = {
+        id: token.id, 
+        email: token.email, 
+        name : token.name,
+        role : token.role,
+        age : token.age,
+        uuid : token.uuid,
+        // You can add other small fields here if necessary, but not the photo
+      };
       return session;
     },
   },

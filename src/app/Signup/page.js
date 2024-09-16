@@ -1,7 +1,9 @@
 'use client'; // this is the SIGN UP CODE.
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const Signup = () => {
+    const router = useRouter();
     const [Credential, SetCredential] = useState({ email: "", name: "", password: "", age:"", role:"" });
     const [file, setFile] = useState(null);
     const [error, setError] = useState('');
@@ -38,7 +40,8 @@ const Signup = () => {
         });
         const json = await response.json();
         console.log(json);
-        if (json.success) {
+        if (json.name) {
+            router.push('/');
             // Save the auth token and redirect
             //localStorage.setItem('token', json.authtoken);
         } else {
