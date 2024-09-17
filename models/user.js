@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // Define association here
       this.hasMany(models.Post, { foreignKey: 'userID' });
+      this.hasMany(models.lrb, { foreignKey: 'userID' });
       this.hasOne(models.Wallet, { foreignKey: 'userID' });
     }
     toJSON(){

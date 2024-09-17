@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const { where } = require("sequelize");
 const multer = require('multer');
-const { sequelize, WebSiteUsers, Post, Wallet } = require("./models");
+const { sequelize, WebSiteUsers, Post, Wallet, lrb } = require("./models");
 const express = require("express");
 const cors = require('cors');
 
@@ -237,6 +237,70 @@ app.delete("/deleteMoney", async (req, res) => {
     return res.status(500).json(error);
   }
 });
+// 14. Reading all the wallets
+app.get("/readMoney", async (req, res) => {
+  try {
+    const wallet2 = await Wallet.findAll();
+    return res.status(202).json(wallet2);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+// 15. Adding Like, Retweet, BookMark
+app.post("/addLIRTBM", async (req, res) => {
+  const { userUuid, PostUuid, likes, retweet, bookmarks } = req.body;
+  try {
+    console.log('/-/-/-/-/-/-/-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/likes:', likes, 'retweet:', retweet, 'bookmarks:', bookmarks);
+
+    //retriving the user 
+    const user1 = await WebSiteUsers.findOne({
+      where: { uuid: userUuid },
+    });
+    //retriving the post 
+    const post1 = await Post.findOne({
+      where: { uuid: PostUuid },
+    });
+    //Checking if the user has ever liked retweeted or bookedmarked 
+    const exists = await lrb.findOne({
+      where: { userID: user1.id, postID:post1.id },
+    });
+    if (exists){
+      await lrb.update(
+        { likes: likes,           // New values
+         retweet: retweet ,           // New values
+         bookmarks: bookmarks },           // New values
+        { where: { userId: user1.id, postID:post1.id  }} // Where condition
+      );
+      return res.status(202).json({message:'liked retweeted bookedmark updated!!!'});
+    }
+    else{
+    const post = await lrb.create({ likes, retweet, bookmarks, userID: user1.id, PostID: post1.id });
+    return res.status(202).json({post, message:'liked retweeted bookedmark added!!!'});}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+// 16. Reading Like, Retweet, BookMark
+app.get("/readLIRTBM", async (req, res) => {
+  const {userUuid, PostUuid} = req.body;
+  try {
+    const exists = await lrb.findOne({
+      where: { userID: userUuid, postID:PostUuid },
+    });
+    console.log("this is exists from Reading Like, Retweet, BookMark `-`-`-`-`-`-`-`-``>>>>>>`-`-`-`-`->>>>>", exists);
+    if (exists){
+      return res.status(202).json(exists);}
+    else {
+      return res.status(202).json({like:false, retweet:false, bookmark:false});
+    }}
+    catch (error) {
+      console.error(error);
+      return res.status(500).json(error);
+    }
+  });
+
 app.listen({ port: 5000 }, async () => {
   console.log("SERVER UP AND RUNNING AT PORT 5000");
   await sequelize.sync({ alter: true });
