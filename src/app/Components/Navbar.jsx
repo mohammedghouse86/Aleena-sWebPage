@@ -1,15 +1,13 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "../globals.css";
 import { useRouter } from 'next/navigation';
 import '../Styles/Game1Styles.css';
 import Logout from '../Components/Logout.js';
-import Navbar from "../Components/Navbar";
-import Post from "../Components/Post";
-import AddPost from "../Components/AddPost";
-import {UserProvider} from "../Context/Context";
-const page = () => {
-  
+import UserContext from "../Context/Context";
+const Navbar = () => {
+  const context = useContext(UserContext);
+  const {setUser} = context;
   const router = useRouter();
   const [session, setSession] = useState(null);
   const [photo,setPhoto] = useState("")
@@ -24,6 +22,7 @@ const page = () => {
           router.push('/');
         } else {
           setSession(data);
+          setUser(data); // user data uploaded in the contextAPI
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -38,7 +37,7 @@ const page = () => {
     const fetchphoto = async () =>{
       const res = await fetch(`http://localhost:5000/Getuserphoto/${session.user.name}`);
       const photo1 = await res.json();
-      //console.log('this is the photo from home ===>>>>',photo1);
+      //console.log('this is the photo from Navbar ===>>>>',photo1);
       setPhoto(`data:image/jpeg;base64,${photo1}`);
     }
     //console.log('this is the session from home ===>>>>',session);
@@ -46,22 +45,22 @@ const page = () => {
     }
   },[session])
   
-  const handleClick = () =>{
-    router.push('/Game');
-  }
+
   return (
-    <>
-    <UserProvider>
-    <Navbar/>
-      <div className="homepge">
-        <Post/>
-        <AddPost/>
-        <button className="card" onClick={handleClick}><h2>Game do it</h2></button>
+    
+      <div className="navbar" style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+        <h1>Social Media Website</h1>
+        <div className="spacer">|</div>
+        {session && 
+        <>
+        <div>{session.user.name.toUpperCase()}</div>
+        <img width='60px' height='40px' style={{width:'60px', height:'40px', borderRadius:'50%', marginLeft:'10px', marginRight:'10px'}} src={photo} alt={`${session.user.name}'s profile`} /> 
+        </>
+        }
         <Logout/>
       </div>
-      </UserProvider>
-      </>
+    
   );
 };
 
-export default page;
+export default Navbar;

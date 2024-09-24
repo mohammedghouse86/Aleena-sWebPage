@@ -12,7 +12,7 @@ const Home = () => {
         //console.log('this is data ===>>>>', data)
 
         if (data) {
-          router.push('/home');
+          router.push('/Home');
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -23,6 +23,7 @@ const Home = () => {
   }, [router]);
   return (
     <>
+    
     <div className="flex items-center justify-center min-h-screen">
       HomePage <LogInForm/>
     </div>

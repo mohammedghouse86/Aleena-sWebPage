@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Post, { foreignKey: 'userID' });
       this.hasMany(models.lrb, { foreignKey: 'userID' });
       this.hasOne(models.Wallet, { foreignKey: 'userID' });
+      this.hasMany(models.comment, { foreignKey: 'userID' });
     }
     toJSON(){
       return {...this.get()} //return {...this.get(), id:undefined} Ghouse did this

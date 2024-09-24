@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const { where } = require("sequelize");
 const multer = require('multer');
-const { sequelize, WebSiteUsers, Post, Wallet, lrb } = require("./models");
+const { sequelize, WebSiteUsers, Post, Wallet, lrb, comment } = require("./models");
 const express = require("express");
 const cors = require('cors');
 
@@ -60,7 +60,7 @@ app.get("/Getwebsiteusers", async (req, res) => {
 app.get("/Getuser/:name", async (req, res) => {
   try {
     const { name: name } = req.params;
-    const user1 = await WebSiteUsers.findOne({ where: { name: name } });
+    const user1 = await WebSiteUsers.findOne({ where: { name: name }, include:[Post,comment] });
     return res.status(202).json(user1);
   } catch (error) {
     console.error(error);
@@ -127,7 +127,7 @@ app.post("/addPost", async (req, res) => {
 // 7. Reading all the post in the table Posts
 app.get("/readPost", async (req, res) => {
   try {
-    const post = await Post.findAll();
+    const post = await Post.findAll({include:[comment,WebSiteUsers]});
     return res.status(202).json(post);
   } catch (error) {
     console.error(error);
@@ -167,7 +167,7 @@ app.delete("/deletePost", async (req, res) => {
 app.get("/readUserPost", async (req, res) => {
   try {
     const { userID } = req.body;
-    const post = await Post.findAll({ where: { userID: userID } });
+    const post = await Post.findAll({ where: { userID: userID }, include:[comment] });
     return res.status(202).json(post);
   } catch (error) {
     console.error(error);
@@ -251,7 +251,7 @@ app.get("/readMoney", async (req, res) => {
 app.post("/addLIRTBM", async (req, res) => {
   const { userUuid, PostUuid, likes, retweet, bookmarks } = req.body;
   try {
-    console.log('/-/-/-/-/-/-/-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/likes:', likes, 'retweet:', retweet, 'bookmarks:', bookmarks);
+    //console.log('/-/-/-/-/-/-/-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/likes:', likes, 'retweet:', retweet, 'bookmarks:', bookmarks);
 
     //retriving the user 
     const user1 = await WebSiteUsers.findOne({
@@ -289,7 +289,7 @@ app.get("/readLIRTBM", async (req, res) => {
     const exists = await lrb.findOne({
       where: { userID: userUuid, postID:PostUuid },
     });
-    console.log("this is exists from Reading Like, Retweet, BookMark `-`-`-`-`-`-`-`-``>>>>>>`-`-`-`-`->>>>>", exists);
+    //console.log("this is exists from Reading Like, Retweet, BookMark `-`-`-`-`-`-`-`-``>>>>>>`-`-`-`-`->>>>>", exists);
     if (exists){
       return res.status(202).json(exists);}
     else {
@@ -300,7 +300,82 @@ app.get("/readLIRTBM", async (req, res) => {
       return res.status(500).json(error);
     }
   });
-
+// 17. Deleting Like, Retweet, BookMark
+app.delete("/deleteLIRTBM", async (req, res) => {
+  const {userUuid, PostUuid} = req.body;
+  try {
+    const exists = await lrb.findOne({
+      where: { userID: userUuid, postID:PostUuid },
+    });
+    //console.log("this is exists from Reading Like, Retweet, BookMark `-`-`-`-`-`-`-`-``>>>>>>`-`-`-`-`->>>>>", exists);
+    if (exists){
+      await exists.destroy();
+      return res.status(202).json({message:"Like, Retweet, BookMark entry has been deleted"});}
+    else {
+      return res.status(202).json({message:"Like, Retweet, BookMark entry NOT FOUND !!!"});
+    }}
+    catch (error) {
+      console.error(error);
+      return res.status(500).json(error);
+    }
+  });
+// 18. Adding Comments to a Post
+app.post("/addcomment", async (req, res) => {
+  const { userUuid, PostUuid, comment1 } = req.body;
+  try {
+    //retriving the user 
+    const user1 = await WebSiteUsers.findOne({
+      where: { uuid: userUuid },
+    });
+    //retriving the post 
+    const post1 = await Post.findOne({
+      where: { uuid: PostUuid },
+    });
+    await comment.create({ comment:comment1, userID: user1.id, PostID: post1.id });
+    return res.status(202).json({message:'Comment Posted!!!'});
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+// 19. Getting Comments of a Post
+app.get("/getcomment", async (req, res) => {
+  const { PostUuid } = req.body;
+  try {
+    //retriving the post 
+    const post1 = await Post.findOne({
+      where: { uuid: PostUuid },
+    });
+    const comments = await comment.findAll({ where : {PostID: post1.id}});
+    return res.status(202).json({comments});
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+// 20. Delete Comment
+app.delete("/delcomment", async (req, res) => {
+  const { userUuid, PostUuid, id } = req.body;
+  try {
+    //retriving the user 
+    const user1 = await WebSiteUsers.findOne({
+      where: { uuid: userUuid },
+    });
+    //retriving the post 
+    const post1 = await Post.findOne({
+      where: { uuid: PostUuid },
+    });
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>userID",user1.id, "PostID",post1.id, "id",id)
+    await comment.destroy({ where : {userID: user1.id, PostID: post1.id, id:id}});
+    return res.status(202).json({message:"comment deleted"});
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
 app.listen({ port: 5000 }, async () => {
   console.log("SERVER UP AND RUNNING AT PORT 5000");
   await sequelize.sync({ alter: true });

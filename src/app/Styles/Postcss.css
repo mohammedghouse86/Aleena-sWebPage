@@ -1,0 +1,19 @@
+.postouter{
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    margin-left: 300px;
+    margin-right: 300px;
+}
+
+.postinner{
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+}
+
+.photo{
+    width:30px;
+    height: 30px;
+    border-radius: 15px;
+}

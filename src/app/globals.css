@@ -3,11 +3,12 @@
 @tailwind utilities;
 
 .homepge{
-    width:100vw;
-    height:100vh;
-    background-color: rgb(226, 16, 86);
-    color: rgb(41, 9, 185);
+    /*width:99vw;*/
+    height:99vh;
+    background-color: rgb(10, 50, 124);
+    color: antiquewhite;
     font-family:'Lucida Sans';
+    margin: 1px;
     
 }
 
@@ -20,3 +21,18 @@
     background-color: black;
     color:antiquewhite
 }
+
+.navbar{
+    /*width:99vw;*/
+    padding-left: 10px;
+    padding-right: 10px;
+    height:50px;
+    background-color: rgb(43, 5, 17);
+    color:antiquewhite;
+    font-family:Georgia;
+    
+}
+
+.spacer {
+    flex-grow: 1; /* This will take up the remaining space between the elements */
+  }

@@ -1,0 +1,30 @@
+.input {
+    background-color: rgb(82, 64, 64);
+    color: blanchedalmond;
+    flex-basis: 90%; /* 80% width */
+    flex-grow: 0;
+    flex-shrink: 0;
+    border: none; /* Optional: to make the input look better */
+    padding: 10px; /* Optional: adds padding for better appearance */
+}
+
+.btn {
+    background-color: rgb(255, 255, 255);
+    color: rgb(6, 16, 102);
+    flex-basis: 20%; /* 20% width */
+    flex-grow: 0;
+    flex-shrink: 0;
+    border: none; /* Optional */
+    padding: 10px; /* Optional */
+    cursor: pointer; /* Adds a pointer cursor */
+    margin-left: auto; /* start from the right*/
+}
+
+.addpost {
+    margin-top: 5px;
+    margin-left: 300px;
+    margin-right: 300px;
+    display: flex;
+    width: calc(100% - 600px); /* Takes into account left and right margins */
+    align-items: center; /* Align items vertically */
+}

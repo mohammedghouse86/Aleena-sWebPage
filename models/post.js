@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       // Define association here
       this.belongsTo(models.WebSiteUsers, { foreignKey: 'userID' });
       this.hasMany(models.lrb, { foreignKey: 'PostID' });
+      this.hasMany(models.comment, { foreignKey: 'PostID' });
     }
   }
   
