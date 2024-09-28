@@ -53,6 +53,7 @@ const page = () => {
     <>
     <UserProvider>
     <Navbar/>
+      
       <div className="homepge">
         <Post/>
         <AddPost/>

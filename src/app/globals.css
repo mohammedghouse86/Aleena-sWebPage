@@ -9,7 +9,10 @@
     color: antiquewhite;
     font-family:'Lucida Sans';
     margin: 1px;
-    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .mainpic{

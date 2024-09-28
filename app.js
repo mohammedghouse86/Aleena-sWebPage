@@ -152,10 +152,12 @@ app.put("/updatePost", async (req, res) => {
 // 9. Deleting Row in Post
 app.delete("/deletePost", async (req, res) => {
   const { UUid } = req.body;
+  
   try {
     const post1 = await Post.findOne({
-      where: { uuid: UUid },
+      where: { id: UUid },
     });
+    console.log('this is what was found',post1)
     await post1.destroy();
     return res.status(202).json({ message: "YOOO THIS ENTRY IS DELETED" });
   } catch (error) {
@@ -283,7 +285,7 @@ app.post("/addLIRTBM", async (req, res) => {
   }
 });
 // 16. Reading Like, Retweet, BookMark
-app.get("/readLIRTBM", async (req, res) => {
+app.post("/readLIRTBM", async (req, res) => {
   const {userUuid, PostUuid} = req.body;
   try {
     const exists = await lrb.findOne({
@@ -302,23 +304,24 @@ app.get("/readLIRTBM", async (req, res) => {
   });
 // 17. Deleting Like, Retweet, BookMark
 app.delete("/deleteLIRTBM", async (req, res) => {
-  const {userUuid, PostUuid} = req.body;
+  const { PostUuid } = req.body;
   try {
-    const exists = await lrb.findOne({
-      where: { userID: userUuid, postID:PostUuid },
+    const exists = await lrb.findAll({
+      where: { postID: PostUuid },
     });
-    //console.log("this is exists from Reading Like, Retweet, BookMark `-`-`-`-`-`-`-`-``>>>>>>`-`-`-`-`->>>>>", exists);
-    if (exists){
-      await exists.destroy();
-      return res.status(202).json({message:"Like, Retweet, BookMark entry has been deleted"});}
-    else {
-      return res.status(202).json({message:"Like, Retweet, BookMark entry NOT FOUND !!!"});
-    }}
-    catch (error) {
-      console.error(error);
-      return res.status(500).json(error);
+
+    if (exists.length > 0) {
+      await Promise.all(exists.map(async (record) => await record.destroy()));
+      return res.status(202).json({ success:true, message: "Like, Retweet, Bookmark entries have been deleted" });
+    } else {
+      return res.status(301).json({ success:true, message: "Like, Retweet, Bookmark entries NOT FOUND !!!" });
     }
-  });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+
 // 18. Adding Comments to a Post
 app.post("/addcomment", async (req, res) => {
   const { userUuid, PostUuid, comment1 } = req.body;
