@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull:{msg:'Post must be valid'},
         notEmpty:{msg:'Post cannot be EMPTY'},
         len: {
-          args: [10, 120], // Minimum 3 characters, maximum 50 characters
+          args: [5, 120], // Minimum 3 characters, maximum 50 characters
           msg: 'Name must be between 10 and 120 characters long'
         }
       }
